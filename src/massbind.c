@@ -58,6 +58,9 @@ int mb_init6(mb_ctx *ctx, const char *dev, const char *start, const char *end, u
 	ctx->low64_start = mb_be64toh(ctx->low64_start);
 	ctx->low64_end = mb_be64toh(ctx->low64_end);
 
+	if (ctx->low64_start > ctx->low64_end)
+		return -1;
+
 	struct {
 		struct nlmsghdr nh;
 		struct ifinfomsg ifi;
@@ -146,7 +149,7 @@ int mb_next6_rand(mb_ctx *ctx, struct in6_addr *ip6)
 	if (!ctx || !ip6)
 		return -1;
 
-	uint64_t rand_max = ctx->low64_end - ctx->low64_start, r = 0;
+	uint64_t rand_max = ctx->low64_end - ctx->low64_start + 1, r = 0;
 
 	// urandom
 	read(ctx->rfd, &r, sizeof(r));

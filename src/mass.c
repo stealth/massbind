@@ -55,10 +55,12 @@ int main(int argc, char **argv)
 	}
 
 	int r = 0;
+	struct in6_addr a;
 
 	for (;;) {
-		struct in6_addr a = {0};
+
 		char ip_str[128] = {0};
+		memset(&a, 0, sizeof(a));
 
 		if (mb_next6_range(&ctx, &a) < 0)
 			break;

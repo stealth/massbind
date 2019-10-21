@@ -1,6 +1,7 @@
 CC=gcc
 CFLAGS=-c -O2 -Wall -std=c11 -pedantic
 
+.PHONY: all clean
 
 all: mass
 
@@ -13,4 +14,6 @@ mass.o: mass.c
 massbind.o: massbind.c
 	$(CC) $(CFLAGS) $^
 
+clean:
+	rm -f *.o mass
 

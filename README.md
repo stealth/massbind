@@ -43,11 +43,12 @@ routes to the *local* routing table:
 [...]
 ```
 
-And add a route on your border router to reach `2019::/64` via a real ip6 address of
-that machine.
+Add a route on your border router to reach `2019::/64` via a real ip6 address of
+that machine, and bind the server to `::`.
 This however makes the entire subnet range accessible from outside. With *massbind*
 you can be more picky on the addresses you use and dispose at runtime from within
-your scanning-engine or whatever use-case you have.
+your scanning-engine or whatever use-case you have. You don't need all the
+configuration steps from above when using *massbind*.
 
 
 Example
@@ -63,6 +64,15 @@ to handle errors during `mb_add6()` gracefully.
 The lib is using the routing sockets to add/del addresses directly. You do not
 need to install *libnl* or similar. The `rtnetlink` API should be stable enough
 to work among various Linux kernel versions 3.x, 4.x.
+
+
+```
+# ./mass add ens3 2019::1 2019::7350 64
+[...]
+```
+
+to test adding all IPv6 addresses from range `2019::1` to `2019::7350` (inclusive)
+to ens3.
 
 
 References
