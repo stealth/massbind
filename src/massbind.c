@@ -64,7 +64,7 @@ int mb_init6(mb_ctx *ctx, const char *dev, const char *start, const char *end, u
 	struct {
 		struct nlmsghdr nh;
 		struct ifinfomsg ifi;
-		char attrbuf[16];
+		char attrbuf[256];
 	} req, reply;
 
 	struct rtattr *rta;
@@ -169,7 +169,7 @@ static int mb_add_del6(mb_ctx *ctx, const struct in6_addr *ip6, int what)
 	struct {
 		struct nlmsghdr nh;
 		struct ifaddrmsg ifa;
-		char attrbuf[16];
+		char attrbuf[256];
 	} req;
 
 	struct {
