@@ -185,6 +185,7 @@ static int mb_add_del6(mb_ctx *ctx, const struct in6_addr *ip6, int what)
 	req.nh.nlmsg_flags = NLM_F_REQUEST|NLM_F_ACK;
 	req.nh.nlmsg_type = (what == MB_ADDR_ADD) ? RTM_NEWADDR : RTM_DELADDR;
 	req.ifa.ifa_family = AF_INET6;
+	req.ifa.ifa_flags = IFA_F_NODAD; // like to add |IFA_F_NOPREFIXROUTE
 	req.ifa.ifa_index = ctx->if_idx;
 	req.ifa.ifa_prefixlen = ctx->prefix;
 
