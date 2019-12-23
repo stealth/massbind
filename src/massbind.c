@@ -185,7 +185,7 @@ static int mb_add_del6(mb_ctx *ctx, const struct in6_addr *ip6, int what)
 	req.nh.nlmsg_flags = NLM_F_REQUEST|NLM_F_ACK;
 	req.nh.nlmsg_type = (what == MB_ADDR_ADD) ? RTM_NEWADDR : RTM_DELADDR;
 	req.ifa.ifa_family = AF_INET6;
-	req.ifa.ifa_flags = IFA_F_NODAD; // like to add |IFA_F_NOPREFIXROUTE
+	req.ifa.ifa_flags = 0;	// replaced by IFA_FLAGS rta
 	req.ifa.ifa_index = ctx->if_idx;
 	req.ifa.ifa_prefixlen = ctx->prefix;
 
@@ -194,7 +194,15 @@ static int mb_add_del6(mb_ctx *ctx, const struct in6_addr *ip6, int what)
 	rta->rta_len = RTA_LENGTH(sizeof(struct in6_addr));
 	memcpy(RTA_DATA(rta), ip6, sizeof(struct in6_addr));
 
-	req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(sizeof(struct in6_addr));
+	req.nh.nlmsg_len += RTA_LENGTH(sizeof(struct in6_addr));
+
+	rta = (struct rtattr *)(((char *) rta) + RTA_LENGTH(sizeof(struct in6_addr)));
+	rta->rta_type = IFA_FLAGS;
+	rta->rta_len = RTA_LENGTH(sizeof(uint32_t));
+	uint32_t flags = IFA_F_NODAD|IFA_F_NOPREFIXROUTE;
+	memcpy(RTA_DATA(rta), &flags, sizeof(flags));
+
+	req.nh.nlmsg_len += RTA_LENGTH(sizeof(uint32_t));
 
 	if (send(ctx->rt_fd, &req, req.nh.nlmsg_len, 0) < 0)
 		return -1;
